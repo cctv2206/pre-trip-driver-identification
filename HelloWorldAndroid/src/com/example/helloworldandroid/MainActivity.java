@@ -61,9 +61,13 @@ public class MainActivity extends ActionBarActivity {
 		// dict of pids
 		HashMap<Integer, String> pidToName = new HashMap<Integer, String>();
 		pidToName.put(144, "Driver_Door_Open_Switch");
-		pidToName.put(338, "Brake_Pedal_Position");
-		pidToName.put(16, "Shifter_Position");
-		pidToName.put(48, "Power_Mode");
+//		pidToName.put(145, "Driver_Door_Ajar_Switch");
+//		pidToName.put(560, "Steering_Wheel_Angle");
+//		pidToName.put(338, "Brake_Pedal_Position");
+//		pidToName.put(16, "Shifter_Position");
+//		pidToName.put(0, "Brake_Active");
+//		pidToName.put(1, "Hard_Brake");
+//		pidToName.put(48, "Power_Mode");
 		pidToName.put(608, "Driver_Seatbelt_Attached");
 		
 		
@@ -74,42 +78,36 @@ public class MainActivity extends ActionBarActivity {
 		    BufferedReader br = new BufferedReader(new FileReader(file));
 		    String line;
 
-		    while ((line = br.readLine()) != null) {
-		    	
-		    	String[] lines = line.split(";");
-		    	int count = 0;
-                for (String eachLine : lines) {
-//                	Log.d("this Line", eachLine);
-                	String[] dataPoint = eachLine.split(":");
-                	int pidNum = Integer.parseInt(dataPoint[0]);
-                	
-                	// check if pid is needed
-                	if (!pidToName.containsKey(pidNum)) {
-                		continue;
-                	}
-                	
-                	double value = Double.parseDouble(dataPoint[1]);
-                	double lat = Double.parseDouble(dataPoint[2]);
-                	double lon = Double.parseDouble(dataPoint[3]);
-                	long time = Long.parseLong(dataPoint[4]);
-                	
-                	data.putLocationData(pidNum, value, time, lat, lon);
-//                	count++;
-//    		        if (count == 5) { // only read 5 lines
-//    		        	break;
-//    		        }
-                }
-		    }
-		    br.close();
+			while ((line = br.readLine()) != null) {
+				String[] lines = line.split(";");
+				int count = 0;
+		                for (String eachLine : lines) {
+		                	String[] dataPoint = eachLine.split(":");
+		                	int pidNum = Integer.parseInt(dataPoint[0]);
+		                	
+		                	// check if pid is needed
+		                	if (!pidToName.containsKey(pidNum)) {
+		                		continue;
+		                	}
+		                	
+		                	double value = Double.parseDouble(dataPoint[1]);
+		                	double lat = Double.parseDouble(dataPoint[2]);
+		                	double lon = Double.parseDouble(dataPoint[3]);
+		                	long time = Long.parseLong(dataPoint[4]);
+		                	
+		                	data.putLocationData(pidNum, value, time, lat, lon);
+		                }
+			}
+	    		br.close();
 		}
 		catch(FileNotFoundException ex) {
 			Log.d("Unable to open file", "File not found");
-        }
-        catch(IOException ex) {
-            Log.d("IOException", "IOException");
-            // Or we could just do this: 
-            // ex.printStackTrace();
-        }
+	        }
+	        catch(IOException ex) {
+	            Log.d("IOException", "IOException");
+	            // Or we could just do this: 
+	            // ex.printStackTrace();
+	        }
 		
 		// new intent
 		Intent intent = new Intent(this, DisplayMessageActivity.class);
@@ -139,8 +137,6 @@ public class MainActivity extends ActionBarActivity {
 	
 	/** Called when the user clicks the Send button */
 	public void sendMessage(View view) {
-
-
 	}
 	
 }
