@@ -61,13 +61,9 @@ public class MainActivity extends ActionBarActivity {
 		// dict of pids
 		HashMap<Integer, String> pidToName = new HashMap<Integer, String>();
 		pidToName.put(144, "Driver_Door_Open_Switch");
-//		pidToName.put(145, "Driver_Door_Ajar_Switch");
-//		pidToName.put(560, "Steering_Wheel_Angle");
-//		pidToName.put(338, "Brake_Pedal_Position");
-//		pidToName.put(16, "Shifter_Position");
-//		pidToName.put(0, "Brake_Active");
-//		pidToName.put(1, "Hard_Brake");
-//		pidToName.put(48, "Power_Mode");
+		pidToName.put(338, "Brake_Pedal_Position");
+		pidToName.put(16, "Shifter_Position");
+		pidToName.put(48, "Power_Mode");
 		pidToName.put(608, "Driver_Seatbelt_Attached");
 		
 		
