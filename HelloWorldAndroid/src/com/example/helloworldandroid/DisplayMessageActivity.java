@@ -84,11 +84,6 @@ public class DisplayMessageActivity extends AppCompatActivity {
 		} else {
 			doorOpenSwitch = bufferReading.get(144);
 		}
-		if (bufferReading.indexOfKey(145) < 0) {
-			Log.d("Can not found pid num", Integer.toString(145));
-		} else {
-			doorAjarSwitch = bufferReading.get(145);
-		}
 		if (bufferReading.indexOfKey(338) < 0) {
 			Log.d("Can not found pid num", Integer.toString(338));
 		} else {
@@ -98,16 +93,6 @@ public class DisplayMessageActivity extends AppCompatActivity {
 			Log.d("Can not found pid num", Integer.toString(16));
 		} else {
 			shifterPosition = bufferReading.get(16);
-		}
-		if (bufferReading.indexOfKey(0) < 0) {
-			Log.d("Can not found pid num", Integer.toString(0));
-		} else {
-			brakeActive = bufferReading.get(0);
-		}
-		if (bufferReading.indexOfKey(1) < 0) {
-			Log.d("Can not found pid num", Integer.toString(1));
-		} else {
-			hardBrake = bufferReading.get(1);
 		}
 		if (bufferReading.indexOfKey(48) < 0) {
 			Log.d("Can not found pid num", Integer.toString(48));
@@ -120,42 +105,78 @@ public class DisplayMessageActivity extends AppCompatActivity {
 			seatbelt = bufferReading.get(608);
 		}
 		
-		
-//		Log.d("Size of door data", Integer.toString(doorOpenSwitch.size()));
-		
+		// extract door event
 		long timeDoorOpen = 0;
 		long timeDoorClose = 0;
 		long dcEvent = 0;
-//		for (int i = 0; i < doorOpenSwitch.size(); i++) {
-//			Log.d("Brake position Data", doorOpenSwitch.get(i).toString());
-//		}
 		int index = 1;
 		while (index < doorOpenSwitch.size()) {
 			if (Math.abs(doorOpenSwitch.get(index).value - doorOpenSwitch.get(index - 1).value) < 0.01) { // same value
 				index++;
 				continue;
 			} else { //value changed
-				if (doorOpenSwitch.get(index).value == 1.0) {
+				if (doorOpenSwitch.get(index).value - doorOpenSwitch.get(index - 1).value > 0.9) { // going up
 					timeDoorOpen = doorOpenSwitch.get(index).timestamp;
-				} else if (doorOpenSwitch.get(index).value == 0.0) {
+				} else if (doorOpenSwitch.get(index).value - doorOpenSwitch.get(index - 1).value < -0.9) { // going down
 					timeDoorClose = doorOpenSwitch.get(index).timestamp;
+					break;
 				}
 				index++;
 			}
-			
 		}
 		dcEvent = timeDoorClose - timeDoorOpen;
 		
-		long seatBeltEvent = 0;
-		long timeSeatBelt = 0;
-		for (int i = 0; i < seatbelt.size(); i++) {
-			Log.d("seat belt timestamp", Long.toString(seatbelt.get(i).timestamp));
-			if (seatbelt.get(i).timestamp > timeDoorOpen) { // get the first one larger than the door open
-				timeSeatBelt = seatbelt.get(i).timestamp;
-				break;
+		// extract the power event
+		long timePowerOn = 0;
+		long powerEvent = 0;
+		index = 1;
+		while (index < powerMode.size()) {
+			if (Math.abs(powerMode.get(index).value - powerMode.get(index - 1).value) < 0.01) { // same value
+				index++;
+				continue;
+			} else { // value changed
+				if (powerMode.get(index).value == 3.0) { // ignition
+					timePowerOn = powerMode.get(index).timestamp;
+					break;
+				}
+				index++;
 			}
 		}
-		seatBeltEvent = timeSeatBelt - timeDoorOpen;
+		powerEvent = timePowerOn - timeDoorClose;
+		
+		// extract the shifter event
+		long timeShifter = 0;
+		long shifterEvent = 0;
+		index = 1;
+		while (index < shifterPosition.size()) {
+			if (Math.abs(shifterPosition.get(index).value - shifterPosition.get(index - 1).value) < 0.01) { // same value
+				index++;
+				continue;
+			} else { // value changed
+				if (shifterPosition.get(index).value == 1.0) { // shift to D
+					timeShifter = shifterPosition.get(index).timestamp;
+					break;
+				}
+				index++;
+			}
+		}
+		shifterEvent = timeShifter - timePowerOn;
+		
+		// extract brake event
+		long timeBrakeRelease = 0;
+		long brakeEvent = 0;
+		index = 0;
+		while (index < brakePosition.size()) {
+			if (brakePosition.get(index).timestamp > timeShifter && brakePosition.get(index).value < 5) {
+				timeBrakeRelease = brakePosition.get(index).timestamp;
+				break;
+			}
+			index++;
+		}
+		brakeEvent = timeBrakeRelease - timeShifter;
+		
+		Log.d("Release the brake", Long.toString(timeBrakeRelease));
+		Log.d("Brake Event", Long.toString(brakeEvent));
 		
 		Log.d("DC event", Long.toString(dcEvent));
 		Log.d("seat belt event", Long.toString(seatBeltEvent));
@@ -163,12 +184,8 @@ public class DisplayMessageActivity extends AppCompatActivity {
 		Log.d("Time door open", Long.toString(timeDoorOpen));
 		Log.d("Time door close", Long.toString(timeDoorClose));
 		
-//		Log.d("size of seat ", pidData.toString());
 		
 		String theListString = "";
-//		for (int i = 0; i < pidData.size(); i++) {
-//			theListString += Double.toString(pidData.get(i).lon()) + " ";
-//		}
    
 		TextView textView = new TextView(this);
 		textView.setTextSize(40);
