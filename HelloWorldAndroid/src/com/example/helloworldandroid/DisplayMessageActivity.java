@@ -184,6 +184,77 @@ public class DisplayMessageActivity extends AppCompatActivity {
 		Log.d("Time door open", Long.toString(timeDoorOpen));
 		Log.d("Time door close", Long.toString(timeDoorClose));
 		
+		// identification using fake data
+		// asssume we have the model
+		double hyperplaneDC  = 2.58;
+		double hyperplaneISU = 6.47;
+		double hyperplaneSF = 7.135;
+		double hyperplaneSU = 10.1218;
+		double hyperplaneRB = 12.9793;
+		
+		// testing data, driver 2
+		double dc = 3.02;
+		double isu = 7.01;
+		double sf = 7.01;
+		double su = 9.1949;
+		double rb = 12.1473;
+		
+		// left of hyperplane
+		int idDC = 1;
+		int idISU = 1;
+		int idSF = 2;
+		int idSU = 2;
+		int idRB = 2;
+		
+		// right of plane
+		int idDCr = 2;
+		int idISUr = 2;
+		int idSFr = 1;
+		int idSUr = 1;
+		int idRBr = 1;
+		
+		// identification, majority wins
+		HashMap<Integer, Integer> votes = new HashMap<Integer, Integer>();
+		votes.put(1, 0);
+		votes.put(2, 0);
+		if (dc < hyperplaneDC) {
+			votes.put(idDC, votes.get(idDC) + 1);
+		} else {
+			votes.put(idDCr, votes.get(idDCr) + 1);
+		}
+		if (isu < hyperplaneISU) {
+			votes.put(idISU, votes.get(idISU) + 1);
+		} else {
+			votes.put(idISUr, votes.get(idISUr) + 1);
+		}
+		if (sf < hyperplaneSF) {
+			votes.put(idSF, votes.get(idSF) + 1);
+		} else {
+			votes.put(idSFr, votes.get(idSFr) + 1);
+		}
+		if (su < hyperplaneSU) {
+			votes.put(idSU, votes.get(idSU) + 1);
+		} else {
+			votes.put(idSUr, votes.get(idSUr) + 1);
+		}
+		if (rb < hyperplaneRB) {
+			votes.put(idRB, votes.get(idRB) + 1);
+		} else {
+			votes.put(idRBr, votes.get(idRBr) + 1);
+		}
+		
+		if (votes.get(1) <= 2) { // 5 votes total
+			Log.d("Identification: ", " Driver 2");
+		} else {
+			Log.d("Identification: ", " Driver 1");
+		}
+		
+		Context context = getApplicationContext();
+		CharSequence text = "Driver 2!";
+		int duration = Toast.LENGTH_LONG;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 		
 		String theListString = "";
    
