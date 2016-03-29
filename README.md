@@ -7,6 +7,12 @@ This repository contains the Android project files.
 
 The project is in progress and this repository may not contains enough files for everyone to run.
 
+=== 03/28/2016 ===
+
+Added Matlab program for reading data from csv file, plotting data, feature extraction and parsing data.
+
+==================
+
 Will be updated.
 
 Have fun.
