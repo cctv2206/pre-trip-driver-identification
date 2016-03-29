@@ -1,7 +1,7 @@
 clc
 clear all
 close all
-M = csvread('1_2.csv',2,0);
+M = csvread('someFile.csv',2,0);
 pid = M(:,1);
 pid_val = M(:,2);
 lat = M(:,3);
@@ -446,6 +446,13 @@ end
 
 dataPoints
 
-%%
+
+%% write the txt files
+
+driver1 = [d1Door; d1Seatbelt; d1Power; d1Shift; d1Brake];
+driver2 = [d2Door; d2Seatbelt; d2Power; d2Shift; d2Brake];
+
+csvwrite('driver1.txt', driver1);
+csvwrite('driver2.txt', driver2);
 
 
