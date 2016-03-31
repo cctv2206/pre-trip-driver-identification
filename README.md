@@ -11,6 +11,10 @@ The project is in progress and this repository may not contains enough files for
 
 Added Matlab program for reading data from csv file, plotting data, feature extraction and parsing data.
 
+=== 03/30/2016 ===
+
+Added Matlab programs for identifing drivers using neural network pattern recognition and SVM.
+
 ==================
 
 Will be updated.
