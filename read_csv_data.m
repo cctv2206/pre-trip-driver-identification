@@ -273,6 +273,65 @@ seatbelt = time_jason;
 seatbeltSize = length(seatbelt);
 
 
+%% speed event timing and value
+
+[sorted_time,I] = sort(time);
+new_pid_val = pid_val(I);
+
+figure
+
+k = find(pid==80);
+time_jason = time(k);
+
+size = length(k);
+
+time_inc = zeros(1,size);
+time_inc(1) = 0;
+
+for i = 2:size
+    time_inc(i) = time_jason(i) - time_jason(i-1) + time_inc(i-1);
+end
+
+set(gca, 'FontSize', 20);
+
+plot(time_inc,pid_val(k),'.')
+ylim([-0.5 100])
+ylabel('Speed')
+xlabel('Elapsed Time (ms)')
+
+
+
+Pid_only_necessary = pid_val(k);
+
+index = 1;
+brakeIndex = 1;
+
+brakeIndexMax = length(brake);
+
+speed_peak_value = zeros(1,20);
+speed_peak_timing = zeros(1,20);
+
+for i = 2:size
+    if time_jason(i) > brake(brakeIndex) && Pid_only_necessary(i) > 0 && Pid_only_necessary(i) <= Pid_only_necessary(i - 1)
+        speed_peak_value(index) = Pid_only_necessary(i);
+        speed_peak_timing(index) = time_jason(i);
+        brakeIndex = brakeIndex + 1;
+        index = index + 1;
+        if brakeIndex == brakeIndexMax + 1;
+            break;
+        end
+    end
+end
+
+index = index -1
+format short
+speed_peak_value
+speed_peak_timing
+
+
+
+
+
 %% find out the time difference
 doorOpenSize = length(doorOpen);
 
@@ -326,6 +385,7 @@ plot(doorOpen, y, 'go',...
      shift, x, 'r+',...
      brake, x, 'ks',...
      seatbelt, z, 'cd',...
+     speed_peak_timing, x, 'kh',...
      'MarkerSize', 10)
 legend('DO','DC','P','S','B', 'SB')
 % plot(shift, x, 'r+',...
@@ -334,7 +394,7 @@ legend('DO','DC','P','S','B', 'SB')
 
 %% extract features
 clear dataPoints
-dataPoints = zeros(1,6);
+dataPoints = zeros(1,8);
 
 doorOpenIndex = 1;
 doorCloseIndex = 1;
@@ -342,6 +402,7 @@ seatbeltIndex = 1;
 powerIndex = 1;
 shiftIndex = 1;
 brakeIndex = 1;
+speedIndex = 1;
 threshold = 30000; % 10 sec
 
 trailIndex = 1;
@@ -407,11 +468,25 @@ while doorOpenIndex <= doorOpenSize
     end
     dataPoints(trailIndex, 5) = brakeTime;
     
+    % get speed time and value
+    while speed_peak_timing(speedIndex) < doorClose(doorCloseIndex)
+        speedIndex = speedIndex + 1;
+    end
+    speedPeakTime = speed_peak_timing(speedIndex) - brake(brakeIndex);
+    if speedPeakTime > threshold
+        doorOpenIndex = doorOpenIndex + 1;
+        continue
+    end
+    dataPoints(trailIndex, 7) = speedPeakTime;
+    dataPoints(trailIndex, 8) = speed_peak_value(speedIndex);
+    
     % next trail
     trailIndex = trailIndex + 1;
     doorOpenIndex = doorOpenIndex + 1;
     
 end
+
+dataPoints
 
 %% separate drivers
 
@@ -421,6 +496,8 @@ d1Power = zeros(1);
 d1Shift = zeros(1);
 d1Brake = zeros(1);
 d1Brake_value = zeros(1);
+d1Speed_peak_time = zeros(1);
+d1Speed_peak_value = zeros(1);
 
 d2Door = zeros(1);
 d2Seatbelt = zeros(1);
@@ -428,6 +505,8 @@ d2Power = zeros(1);
 d2Shift = zeros(1);
 d2Brake = zeros(1);
 d2Brake_value = zeros(1);
+d2Speed_peak_time = zeros(1);
+d2Speed_peak_value = zeros(1);
 
 index = 1;
 size = length(dataPoints);
@@ -442,6 +521,8 @@ while index <= size
         d1Shift(d1Index) = dataPoints(index, 4);
         d1Brake(d1Index) = dataPoints(index, 5);
         d1Brake_value(d1Index) = dataPoints(index, 6);
+        d1Speed_peak_time(d1Index) = dataPoints(index, 7);
+        d1Speed_peak_value(d1Index) = dataPoints(index, 8);
         d1Index = d1Index + 1;
     else %driver 2
         d2Door(d2Index) = dataPoints(index, 1);
@@ -450,20 +531,20 @@ while index <= size
         d2Shift(d2Index) = dataPoints(index, 4);
         d2Brake(d2Index) = dataPoints(index, 5);
         d2Brake_value(d2Index) = dataPoints(index, 6);
+        d2Speed_peak_time(d2Index) = dataPoints(index, 7);
+        d2Speed_peak_value(d2Index) = dataPoints(index, 8);
         d2Index = d2Index + 1;
     end
     index = index + 1;
 end
 
-dataPoints
 
 
 %% write the txt files
 
-driver1 = [d1Door; d1Seatbelt; d1Power; d1Shift; d1Brake; d1Brake_value];
-driver2 = [d2Door; d2Seatbelt; d2Power; d2Shift; d2Brake; d2Brake_value];
+driver1_speed = [d1Door; d1Seatbelt; d1Power; d1Shift; d1Brake; d1Brake_value; d1Speed_peak_time; d1Speed_peak_value];
+driver2_speed = [d2Door; d2Seatbelt; d2Power; d2Shift; d2Brake; d2Brake_value; d2Speed_peak_time; d2Speed_peak_value];
 
-csvwrite('driver1.txt', driver1);
-csvwrite('driver2.txt', driver2);
-
+csvwrite('driver9_data.txt', driver1_speed);
+csvwrite('driver10_data.txt', driver2_speed);
 
