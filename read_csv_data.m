@@ -1,7 +1,7 @@
 clc
 clear all
 close all
-M = csvread('someFile.csv',2,0);
+M = csvread('some_file.csv',2,0);
 pid = M(:,1);
 pid_val = M(:,2);
 lat = M(:,3);
@@ -102,8 +102,7 @@ for i = 2:size
            end
        end
        
-
-   end   
+   end
 end
 index = index -1
 format short
@@ -145,8 +144,13 @@ shiftIndex = 1;
 
 shiftIndexMax = length(shift);
 
+brake_value = zeros(1,20);
+
 for i = 1:size
-     
+   if time_jason(i) - shift(shiftIndex) < 50
+       brake_value(shiftIndex) = Pid_only_necessary(i);
+   end
+    
    if time_jason(i) > shift(shiftIndex) && Pid_only_necessary(i) < 5 
        brake(index) = time_jason(i);
        shiftIndex = shiftIndex + 1;
@@ -157,6 +161,7 @@ for i = 1:size
 
    end   
 end
+
 index = index -1
 format short
 brake
@@ -260,7 +265,6 @@ end
 set(gca, 'FontSize', 20);
 
 plot(time_inc,pid_val(k),'.')
-%xlim([0 3200000])
 ylim([0 1.5])
 ylabel('Seatbelt (Degree)')
 xlabel('Elapsed Time (ms)')
@@ -330,7 +334,7 @@ legend('DO','DC','P','S','B', 'SB')
 
 %% extract features
 clear dataPoints
-dataPoints = zeros(1,5);
+dataPoints = zeros(1,6);
 
 doorOpenIndex = 1;
 doorCloseIndex = 1;
@@ -389,6 +393,7 @@ while doorOpenIndex <= doorOpenSize
         continue
     end
     dataPoints(trailIndex, 4) = shiftTime;
+    dataPoints(trailIndex, 6) = brake_value(shiftIndex);
     
     
     % get brake time
@@ -409,16 +414,20 @@ while doorOpenIndex <= doorOpenSize
 end
 
 %% separate drivers
+
 d1Door = zeros(1);
 d1Seatbelt = zeros(1);
 d1Power = zeros(1);
 d1Shift = zeros(1);
 d1Brake = zeros(1);
+d1Brake_value = zeros(1);
+
 d2Door = zeros(1);
 d2Seatbelt = zeros(1);
 d2Power = zeros(1);
 d2Shift = zeros(1);
 d2Brake = zeros(1);
+d2Brake_value = zeros(1);
 
 index = 1;
 size = length(dataPoints);
@@ -432,14 +441,16 @@ while index <= size
         d1Power(d1Index) = dataPoints(index, 3);
         d1Shift(d1Index) = dataPoints(index, 4);
         d1Brake(d1Index) = dataPoints(index, 5);
+        d1Brake_value(d1Index) = dataPoints(index, 6);
         d1Index = d1Index + 1;
     else %driver 2
-        d2Door(d1Index) = dataPoints(index, 1);
-        d2Seatbelt(d1Index) = dataPoints(index, 2);
-        d2Power(d1Index) = dataPoints(index, 3);
-        d2Shift(d1Index) = dataPoints(index, 4);
-        d2Brake(d1Index) = dataPoints(index, 5);
-        d2Index = d1Index + 1;
+        d2Door(d2Index) = dataPoints(index, 1);
+        d2Seatbelt(d2Index) = dataPoints(index, 2);
+        d2Power(d2Index) = dataPoints(index, 3);
+        d2Shift(d2Index) = dataPoints(index, 4);
+        d2Brake(d2Index) = dataPoints(index, 5);
+        d2Brake_value(d2Index) = dataPoints(index, 6);
+        d2Index = d2Index + 1;
     end
     index = index + 1;
 end
@@ -449,8 +460,8 @@ dataPoints
 
 %% write the txt files
 
-driver1 = [d1Door; d1Seatbelt; d1Power; d1Shift; d1Brake];
-driver2 = [d2Door; d2Seatbelt; d2Power; d2Shift; d2Brake];
+driver1 = [d1Door; d1Seatbelt; d1Power; d1Shift; d1Brake; d1Brake_value];
+driver2 = [d2Door; d2Seatbelt; d2Power; d2Shift; d2Brake; d2Brake_value];
 
 csvwrite('driver1.txt', driver1);
 csvwrite('driver2.txt', driver2);
