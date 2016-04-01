@@ -23,6 +23,14 @@ Added a matlab program for identifing drivers using multisvm.
 
 Note: new feature provide us an increase of accuracy by 8%.
 
+=== 04/01/2016 ===
+
+Added new features: Speed_peak_timing, the time the vehicle reaches first speed peak. Speed_peak_value, the value of the speed.
+
+In multi_svm_driver.m, using a array to easily choose features to use. Fun the tests in for loop.
+
+The Android App will erase the entire phone and display "Happy fool's day" on the screen.
+
 ==================
 
 Will be updated.
