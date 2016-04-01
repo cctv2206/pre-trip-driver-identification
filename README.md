@@ -15,6 +15,14 @@ Added Matlab program for reading data from csv file, plotting data, feature extr
 
 Added Matlab programs for identifing drivers using neural network pattern recognition and SVM.
 
+=== 03/31/2016 ===
+
+Added new feature: brake_value. Indicating how hard a driver push the brake when he/she shifts gear.
+
+Added a matlab program for identifing drivers using multisvm.
+
+Note: new feature provide us an increase of accuracy by 8%.
+
 ==================
 
 Will be updated.
