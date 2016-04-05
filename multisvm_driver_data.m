@@ -31,66 +31,82 @@ size10 = length(driver10);
 
 
 % choose features here
-rowNums = [2 3 4 5 6 8];
+rowNums = [1 2 3 4 5 6 8];
 rows = length(rowNums);
 
 driver1_refined = [];
 for i = 1:rows
-    driver1_refined = [driver1_refined; driver1(i,:)];
+    driver1_refined = [driver1_refined; driver1(rowNums(i),:)];
 end
 
 driver2_refined = [];
 for i = 1:rows
-    driver2_refined = [driver2_refined; driver2(i,:)];
+    driver2_refined = [driver2_refined; driver2(rowNums(i),:)];
 end
 
 driver3_refined = [];
 for i = 1:rows
-    driver3_refined = [driver3_refined; driver3(i,:)];
+    driver3_refined = [driver3_refined; driver3(rowNums(i),:)];
 end
 
 driver4_refined = [];
 for i = 1:rows
-    driver4_refined = [driver4_refined; driver4(i,:)];
+    driver4_refined = [driver4_refined; driver4(rowNums(i),:)];
 end
 
 driver5_refined = [];
 for i = 1:rows
-    driver5_refined = [driver5_refined; driver5(i,:)];
+    driver5_refined = [driver5_refined; driver5(rowNums(i),:)];
 end
 
 driver6_refined = [];
 for i = 1:rows
-    driver6_refined = [driver6_refined; driver6(i,:)];
+    driver6_refined = [driver6_refined; driver6(rowNums(i),:)];
 end
 
 driver7_refined = [];
 for i = 1:rows
-    driver7_refined = [driver7_refined; driver7(i,:)];
+    driver7_refined = [driver7_refined; driver7(rowNums(i),:)];
 end
 
 driver8_refined = [];
 for i = 1:rows
-    driver8_refined = [driver8_refined; driver8(i,:)];
+    driver8_refined = [driver8_refined; driver8(rowNums(i),:)];
 end
 
 driver9_refined = [];
 for i = 1:rows
-    driver9_refined = [driver9_refined; driver9(i,:)];
+    driver9_refined = [driver9_refined; driver9(rowNums(i),:)];
 end
 
 driver10_refined = [];
 for i = 1:rows
-    driver10_refined = [driver10_refined; driver10(i,:)];
+    driver10_refined = [driver10_refined; driver10(rowNums(i),:)];
 end
 
+% all drivers
+% TrainingSet = [driver1_refined driver2_refined driver3_refined driver4_refined driver5_refined driver6_refined driver7_refined driver8_refined driver9_refined driver10_refined]';
+% target = [ones(1, size1) 2*ones(1,size2) 3*ones(1, size3) 4*ones(1, size4) 5*ones(1, size5) 6*ones(1, size6) 7*ones(1, size7) 8*ones(1, size8) 9*ones(1, size9) 10*ones(1, size10)];
 
-% TrainingSet = [driver1_refined driver2_refined driver3_refined driver4_refined]';
-% target = [ones(1, size1) 2*ones(1,size2) 3*ones(1, size3) 4*ones(1, size4)];
+% 1 2 3 4
+TrainingSet = [driver1_refined driver2_refined driver3_refined driver4_refined ]';
+target = [1*ones(1, size1) 2*ones(1,size2) 3*ones(1, size3) 4*ones(1, size4) ];
 
-TrainingSet = [driver1_refined driver2_refined driver3_refined driver4_refined driver5_refined driver6_refined driver7_refined driver8_refined driver9_refined driver10_refined]';
-target = [ones(1, size1) 2*ones(1,size2) 3*ones(1, size3) 4*ones(1, size4) 5*ones(1, size5) 6*ones(1, size6) 7*ones(1, size7) 8*ones(1, size8) 9*ones(1, size9) 10*ones(1, size10)];
+% 5 6 7 8
+% TrainingSet = [driver5_refined driver6_refined driver7_refined driver8_refined ]';
+% target = [5*ones(1, size5) 6*ones(1,size6) 7*ones(1, size7) 8*ones(1, size8) ];
 
+% 1 2 9 10
+% TrainingSet = [driver1_refined driver2_refined driver9_refined driver10_refined ]';
+% target = [1*ones(1, size1) 2*ones(1,size2) 9*ones(1, size9) 10*ones(1, size10) ];
+
+% 1 3 5 7
+% TrainingSet = [driver1_refined driver3_refined driver5_refined driver7_refined ]';
+% target = [1*ones(1, size1) 3*ones(1,size3) 5*ones(1, size5) 7*ones(1, size7) ];
+
+% 2 4 6 8
+% TrainingSet = [driver2_refined driver4_refined driver6_refined driver8_refined ]';
+% target = [2*ones(1, size2) 4*ones(1,size4) 6*ones(1, size6) 8*ones(1, size8) ];
 
 
 %% train and test using for loop
@@ -120,8 +136,3 @@ tot_num
 correct = count / tot_num
 
 compare = [target; predict];
-
-
-
-
-
