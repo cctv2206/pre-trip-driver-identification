@@ -31,6 +31,12 @@ In multi_svm_driver.m, using a array to easily choose features to use. Fun the t
 
 The Android App will erase the entire phone and display "Happy fool's day" on the screen.
 
+=== 04/05/2016 ===
+
+Fixed the feature selection bug. Accuracy result looks normal now.
+
+Final report in progress.
+
 ==================
 
 Will be updated.
