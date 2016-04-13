@@ -37,8 +37,10 @@ Fixed the feature selection bug. Accuracy result looks normal now.
 
 Final report in progress.
 
-==================
+=== 04/13/2016 ===
 
-Will be updated.
+Uploaded the Final report: Kai-Kang-Tech-Paper.pdf
+
+==================
 
 Have fun.
